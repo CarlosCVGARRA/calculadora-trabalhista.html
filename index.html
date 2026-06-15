@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Calculadora Trabalhista Pro - Escritório Contábil</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&family=JetBrains+Mono:wght=400;500;600&display=swap');
 
 :root {
   --bg:        #08090f; /* Midnight Slate */
@@ -45,7 +45,7 @@ html, body {
   grid-template-rows: auto 1fr;
   gap: 2px;
   min-height: 100vh;
-  padding-bottom: 90px; /* Margem extra para não cobrir a assinatura com o rodapé fixo */
+  padding-bottom: 110px; /* Margem extra para o rodapé fixo unificado */
 }
 
 .app-header {
@@ -225,18 +225,40 @@ html, body {
 
 .input-wrap input::placeholder { color: #334155; }
 
-/* resultado calculado (read-only) */
+/* ── EDITABLE CALCULATED VALUES ── */
 .calc-val {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--green);
   text-align: right;
   min-width: 95px;
+  width: 95px;
   padding: 2px 6px;
-  background: rgba(16, 185, 129, 0.05);
+  background: rgba(16, 185, 129, 0.04);
   border: 1px solid rgba(16, 185, 129, 0.15);
   border-radius: 6px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.calc-val:focus {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: var(--green);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+}
+
+/* Estado de campo alterado manualmente */
+.calc-val.overridden {
+  color: var(--yellow) !important;
+  background: rgba(245, 158, 11, 0.06) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.calc-val.overridden:focus {
+  background: rgba(245, 158, 11, 0.1) !important;
+  border-color: var(--yellow) !important;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.25) !important;
 }
 
 /* ── ADD FIELD ── */
@@ -308,8 +330,8 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 95px;
-  padding: 2px 6px;
+  min-width: 100px;
+  padding: 2px 8px;
   border-right: 1px solid var(--border);
 }
 
@@ -338,29 +360,6 @@ html, body {
 .pi-val.red    { color: var(--red); }
 .pi-val.purple { color: var(--purple); }
 .pi-val.white  { color: var(--text); }
-
-.painel-liquido {
-  margin-left: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  padding-left: 15px;
-}
-
-.painel-liquido .pl-label {
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .8px;
-  color: var(--muted);
-}
-
-.painel-liquido .pl-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--green);
-}
 
 /* ── SELETOR PERÍODO / REGIME / OUTROS ── */
 .periodo-wrap {
@@ -528,8 +527,21 @@ html, body {
       <span style="font-size:16px;">⚖️</span>
       <h1 style="font-weight:800;">Calculadora Trabalhista</h1>
     </div>
-    <!-- DATA E HORA CENTRALIZADA -->
-    <div id="relogio-header" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted2); font-weight: 500;"></div>
+    
+    <!-- DATA E HORA CENTRALIZADA E DESTACADA -->
+    <div id="relogio-header" style="
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: -0.1px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border2);
+      padding: 4px 12px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    "></div>
+    
     <span class="badge">v2.4 Contábil</span>
   </header>
 
@@ -538,15 +550,15 @@ html, body {
     <span class="ts-label">⏱ Período do Contrato</span>
     <div class="tempo-group">
       <label>Admissão</label>
-      <div class="input-wrap" style="width: 110px;"><input type="date" id="data-admissao" oninput="calcular()"></div>
+      <div class="input-wrap" style="width: 110px;"><input type="date" id="data-admissao" oninput="recalcular()"></div>
     </div>
     <div class="tempo-group">
       <label>Demissão</label>
-      <div class="input-wrap" style="width: 110px;"><input type="date" id="data-demissao" oninput="calcular()"></div>
+      <div class="input-wrap" style="width: 110px;"><input type="date" id="data-demissao" oninput="recalcular()"></div>
     </div>
     <div class="tempo-group">
       <label>Dias/mês</label>
-      <div class="input-wrap" style="width: 45px;"><input type="text" inputmode="decimal" id="dias-por-mes" placeholder="30" value="30" oninput="calcular()"></div>
+      <div class="input-wrap" style="width: 45px;"><input type="text" inputmode="decimal" id="dias-por-mes" placeholder="30" value="30" oninput="recalcular()"></div>
     </div>
     <div class="tempo-resumo" id="tempo-resumo">—</div>
   </div>
@@ -564,7 +576,7 @@ html, body {
       <div class="section-body" id="body-ganhos">
         <div class="field">
           <label>Salário Base</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="salario" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="salario" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         
         <!-- SELETOR DE REGIME DE TRABALHO -->
@@ -578,47 +590,47 @@ html, body {
 
         <div class="field">
           <label>Divisor (Jornada) <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="divisor" value="220" oninput="calcular()"><span class="pfx">Hrs</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="divisor" value="220" oninput="recalcular()"><span class="pfx">Hrs</span></div>
         </div>
         
         <!-- ASSIDUIDADE REESTRUTURADA PARA PORCENTAGEM -->
         <div class="field">
           <label>Assiduidade <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-assiduidade" placeholder="0" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-assiduidade" placeholder="0" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
         <div class="field">
           <label>Valor Assiduidade</label>
-          <div class="calc-val" id="assiduidade-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="assiduidade-val" oninput="marcarModificado('assiduidade-val')" onfocus="limparAoFocar('assiduidade-val')" onblur="formatarAoSair('assiduidade-val')" placeholder="R$ 0,00">
         </div>
 
         <div class="field">
           <label>Comissão</label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="comissao" placeholder="0,00" oninput="calcular()"></div>
+            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="comissao" placeholder="0,00" oninput="recalcular()"></div>
             <select class="periodo-sel" id="per-comissao" onchange="calcular()"><option value="mes">Mês</option><option value="semana">Sem</option><option value="dia">Dia</option></select>
           </div>
         </div>
         <div class="field">
           <label>Gratificação</label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="gratificacao" placeholder="0,00" oninput="calcular()"></div>
+            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="gratificacao" placeholder="0,00" oninput="recalcular()"></div>
             <select class="periodo-sel" id="per-gratificacao" onchange="calcular()"><option value="mes">Mês</option><option value="dia">Dia</option></select>
           </div>
         </div>
         <div class="field">
           <label>Bonificação</label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="bonificacao" placeholder="0,00" oninput="calcular()"></div>
-            <select class="periodo-sel" id="per-bonificacao" onchange="calcular()"><option value="mes">Mês</option><option value="dia">Dia</option></select>
+            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="bonificacao" placeholder="0,00" oninput="recalcular()"></div>
+            <select class="periodo-sel" id="per-bonificacao" onchange="calcular()"><option value="mes">Mês</option><option value="semana">Sem</option><option value="dia">Dia</option></select>
           </div>
         </div>
         <div class="field">
           <label>PLR <span class="tag">isento inss/fgts</span></label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="plr" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="plr" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Outros Ganhos</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-ganhos" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-ganhos" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div id="campos-ganhos-extras"></div>
         <div class="add-field-row">
@@ -639,63 +651,63 @@ html, body {
         <div class="field">
           <label>Horas Extras (50%) <span class="tag auto">AUTO</span></label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><span class="pfx">Hrs</span><input type="text" inputmode="decimal" id="he50-horas" placeholder="0" oninput="calcular()"></div>
+            <div class="input-wrap"><span class="pfx">Hrs</span><input type="text" inputmode="decimal" id="he50-horas" placeholder="0" oninput="recalcular()"></div>
             <select class="periodo-sel" id="per-he50" onchange="calcular()"><option value="mes">Mês</option><option value="semana">Sem</option><option value="dia">Dia</option></select>
           </div>
         </div>
         <div class="field">
           <label>Valor Hora Extra 50%</label>
-          <div class="calc-val" id="he50-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="he50-val" oninput="marcarModificado('he50-val')" onfocus="limparAoFocar('he50-val')" onblur="formatarAoSair('he50-val')" placeholder="R$ 0,00">
         </div>
         <div class="field">
           <label>HE Domingo/Feriado (100%) <span class="tag auto">AUTO</span></label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><span class="pfx">Hrs</span><input type="text" inputmode="decimal" id="he100-horas" placeholder="0" oninput="calcular()"></div>
+            <div class="input-wrap"><span class="pfx">Hrs</span><input type="text" inputmode="decimal" id="he100-horas" placeholder="0" oninput="recalcular()"></div>
             <select class="periodo-sel" id="per-he100" onchange="calcular()"><option value="mes">Mês</option><option value="semana">Sem</option><option value="dia">Dia</option></select>
           </div>
         </div>
         <div class="field">
           <label>Valor HE 100%</label>
-          <div class="calc-val" id="he100-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="he100-val" oninput="marcarModificado('he100-val')" onfocus="limparAoFocar('he100-val')" onblur="formatarAoSair('he100-val')" placeholder="R$ 0,00">
         </div>
         <div class="field">
           <label>% HE 50% <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-he50" value="50" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-he50" value="50" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
         <div class="field">
           <label>% HE 100% <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-he100" value="100" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-he100" value="100" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
         
         <!-- ADICIONAL NOTURNO EM HORAS -->
         <div class="field">
           <label>Horas Noturnas <span class="tag auto">AUTO</span></label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><span class="pfx">Hrs</span><input type="text" inputmode="decimal" id="noturno-horas" placeholder="0" oninput="calcular()"></div>
+            <div class="input-wrap"><span class="pfx">Hrs</span><input type="text" inputmode="decimal" id="noturno-horas" placeholder="0" oninput="recalcular()"></div>
             <select class="periodo-sel" id="per-noturno" onchange="calcular()"><option value="mes">Mês</option><option value="semana">Sem</option><option value="dia">Dia</option></select>
           </div>
         </div>
         <div class="field">
           <label>Valor Adicional Noturno</label>
-          <div class="calc-val" id="noturno-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="noturno-val" oninput="marcarModificado('noturno-val')" onfocus="limparAoFocar('noturno-val')" onblur="formatarAoSair('noturno-val')" placeholder="R$ 0,00">
         </div>
         <div class="field">
           <label>% Adicional Noturno <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-noturno" value="20" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-noturno" value="20" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
 
         <!-- REFLUXO DSR SOBRE ADICIONAIS VARIÁVEIS -->
         <div class="field">
           <label>DSR: Dias Úteis / Domingos</label>
           <div class="periodo-wrap">
-            <div class="input-wrap" style="width: 45px;"><input type="text" inputmode="decimal" id="dsr-uteis" value="26" oninput="calcular()"></div>
+            <div class="input-wrap" style="width: 45px;"><input type="text" inputmode="decimal" id="dsr-uteis" value="26" oninput="recalcular()"></div>
             <span style="color: var(--muted); font-size: 10px;">/</span>
-            <div class="input-wrap" style="width: 45px;"><input type="text" inputmode="decimal" id="dsr-domingos" value="4" oninput="calcular()"></div>
+            <div class="input-wrap" style="width: 45px;"><input type="text" inputmode="decimal" id="dsr-domingos" value="4" oninput="recalcular()"></div>
           </div>
         </div>
         <div class="field">
           <label>Reflexo DSR s/ Adicionais</label>
-          <div class="calc-val" id="dsr-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="dsr-val" oninput="marcarModificado('dsr-val')" onfocus="limparAoFocar('dsr-val')" onblur="formatarAoSair('dsr-val')" placeholder="R$ 0,00">
         </div>
 
         <!-- INSALUBRIDADE PARAMETRIZADA POR GRAU SOBRE S.M. -->
@@ -710,7 +722,7 @@ html, body {
         </div>
         <div class="field">
           <label>Valor Insalubridade</label>
-          <div class="calc-val" id="insalubridade-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="insalubridade-val" oninput="marcarModificado('insalubridade-val')" onfocus="limparAoFocar('insalubridade-val')" onblur="formatarAoSair('insalubridade-val')" placeholder="R$ 0,00">
         </div>
 
         <!-- PERICULOSIDADE CLT (30% S.B.) -->
@@ -723,7 +735,7 @@ html, body {
         </div>
         <div class="field">
           <label>Valor Periculosidade</label>
-          <div class="calc-val" id="periculosidade-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="periculosidade-val" oninput="marcarModificado('periculosidade-val')" onfocus="limparAoFocar('periculosidade-val')" onblur="formatarAoSair('periculosidade-val')" placeholder="R$ 0,00">
         </div>
       </div>
     </div>
@@ -738,47 +750,47 @@ html, body {
       <div class="section-body">
         <div class="field">
           <label>Vale Transporte</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="vt" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="vt" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Passe de Ônibus</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="passe" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="passe" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Vale Alimentação</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="va" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="va" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Vale Refeição</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="vr" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="vr" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Cesta Básica</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="cesta" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="cesta" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Auxílio Combustível</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="combustivel" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="combustivel" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Auxílio Creche</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="creche" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="creche" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Plano de Saúde</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="plano-saude" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="plano-saude" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Plano Odontológico</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="plano-odonto" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="plano-odonto" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Seguro de Vida</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="seguro-vida" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="seguro-vida" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Outros Benefícios</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-benef" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-benef" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div id="campos-benef-extras"></div>
         <div class="add-field-row">
@@ -805,43 +817,43 @@ html, body {
 
         <div class="field">
           <label>% FGTS <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-fgts" value="8" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-fgts" value="8" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
         <div class="field">
           <label>FGTS Mensal <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="fgts-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="fgts-val" oninput="marcarModificado('fgts-val')" onfocus="limparAoFocar('fgts-val')" onblur="formatarAoSair('fgts-val')" placeholder="R$ 0,00">
         </div>
 
         <div class="field">
           <label>% Multa FGTS <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-multa-fgts" value="40" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-multa-fgts" value="40" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
 
         <div class="field">
           <label>% Férias <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-ferias" value="100" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-ferias" value="100" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
         <div class="field">
           <label>Férias Estimadas <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="ferias-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="ferias-val" oninput="marcarModificado('ferias-val')" onfocus="limparAoFocar('ferias-val')" onblur="formatarAoSair('ferias-val')" placeholder="R$ 0,00">
         </div>
 
         <div class="field">
           <label>% 1/3 Constitucional <span class="tag">editável</span></label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-terco" value="33.33" oninput="calcular()"><span class="pfx">%</span></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="perc-terco" value="33.33" oninput="recalcular()"><span class="pfx">%</span></div>
         </div>
         <div class="field">
           <label>1/3 Constitucional <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="terco-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="terco-val" oninput="marcarModificado('terco-val')" onfocus="limparAoFocar('terco-val')" onblur="formatarAoSair('terco-val')" placeholder="R$ 0,00">
         </div>
         <div class="field">
           <label>Total Férias + 1/3 <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="total-ferias-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="total-ferias-val" oninput="marcarModificado('total-ferias-val')" onfocus="limparAoFocar('total-ferias-val')" onblur="formatarAoSair('total-ferias-val')" placeholder="R$ 0,00">
         </div>
 
         <div class="field">
           <label>13º Salário <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="decimo-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="decimo-val" oninput="marcarModificado('decimo-val')" onfocus="limparAoFocar('decimo-val')" onblur="formatarAoSair('decimo-val')" placeholder="R$ 0,00">
         </div>
       </div>
     </div>
@@ -856,29 +868,41 @@ html, body {
       <div class="section-body">
         <div class="field">
           <label>Saldo de Salário <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="saldo-sal">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="saldo-sal" oninput="marcarModificado('saldo-sal')" onfocus="limparAoFocar('saldo-sal')" onblur="formatarAoSair('saldo-sal')" placeholder="R$ 0,00">
         </div>
-        <div class="field">
-          <label>13º Proporcional <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="decimo-prop">R$ 0,00</div>
+        <div class="field" style="grid-template-columns: 1fr auto; align-items: start;">
+          <div style="display: flex; flex-direction: column;">
+            <label>13º Proporcional <span class="tag auto">AUTO</span></label>
+            <span id="decimo-prop-info" style="font-size: 8px; color: var(--muted); margin-top: 1px;"></span>
+          </div>
+          <input type="text" inputmode="decimal" class="calc-val" id="decimo-prop" oninput="marcarModificado('decimo-prop')" onfocus="limparAoFocar('decimo-prop')" onblur="formatarAoSair('decimo-prop')" placeholder="R$ 0,00">
         </div>
         <div class="field">
           <label>Adiantamento 13º (Já Pago) <span class="tag">desconto</span></label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="adiantamento-decimo" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="adiantamento-decimo" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Férias Proporcionais <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="ferias-prop">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="ferias-prop" oninput="marcarModificado('ferias-prop')" onfocus="limparAoFocar('ferias-prop')" onblur="formatarAoSair('ferias-prop')" placeholder="R$ 0,00">
         </div>
         
         <!-- APENAS UMA ÚNICA CAIXA VAZIA DE DIGITAÇÃO PARA ANOS DE FÉRIAS VENCIDAS -->
         <div class="field">
           <label>Férias Vencidas (Anos)</label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="ferias-vencidas-anos" placeholder="0" oninput="calcular()"></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="ferias-vencidas-anos" placeholder="0" oninput="recalcular()"></div>
         </div>
+
+        <!-- SELETOR DE PAGAMENTO EM DOBRO (ART. 137 DA CLT) -->
+        <div class="field" style="grid-template-columns: 1fr; margin-top: -2px; margin-bottom: 2px;">
+          <label style="cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--muted2);">
+            <input type="checkbox" id="ferias-dobro" onchange="calcular()" checked style="cursor: pointer; accent-color: var(--blue);">
+            Aplicar pagamento em dobro (Art. 137 da CLT)
+          </label>
+        </div>
+
         <div class="field">
           <label>Valor Férias Vencidas + 1/3</label>
-          <div class="calc-val" id="ferias-vencidas-calc">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="ferias-vencidas-calc" oninput="marcarModificado('ferias-vencidas-calc')" onfocus="limparAoFocar('ferias-vencidas-calc')" onblur="formatarAoSair('ferias-vencidas-calc')" placeholder="R$ 0,00">
         </div>
         
         <!-- MOTIVO E TIPO DE AVISO CONFORME A CLT -->
@@ -898,9 +922,12 @@ html, body {
             <option value="dispensado">Dispensado (Sem Ônus)</option>
           </select>
         </div>
-        <div class="field">
-          <label>Valor Aviso Prévio</label>
-          <div class="calc-val" id="aviso-val">R$ 0,00</div>
+        <div class="field" style="grid-template-columns: 1fr auto; align-items: start;">
+          <div style="display: flex; flex-direction: column;">
+            <label>Valor Aviso Prévio</label>
+            <span id="aviso-val-info" style="font-size: 8px; color: var(--muted); margin-top: 1px;"></span>
+          </div>
+          <input type="text" inputmode="decimal" class="calc-val" id="aviso-val" oninput="marcarModificado('aviso-val')" onfocus="limparAoFocar('aviso-val')" onblur="formatarAoSair('aviso-val')" placeholder="R$ 0,00">
         </div>
         <div class="aviso-info" id="aviso-info-text" style="display:none; margin-top: 4px;"></div>
 
@@ -913,23 +940,26 @@ html, body {
         </div>
         <div class="field" id="fgts-real-wrap" style="display:none;">
           <label>Saldo p/ Fins Rescisórios</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="fgts-saldo-real" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="fgts-saldo-real" placeholder="0,00" oninput="recalcular()"></div>
         </div>
-        <div class="field">
-          <label>FGTS Acumulado <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="fgts-acum">R$ 0,00</div>
+        <div class="field" style="grid-template-columns: 1fr auto; align-items: start;">
+          <div style="display: flex; flex-direction: column;">
+            <label>FGTS Acumulado <span class="tag auto">AUTO</span></label>
+            <span id="fgts-acum-info" style="font-size: 8px; color: var(--muted); margin-top: 1px;"></span>
+          </div>
+          <input type="text" inputmode="decimal" class="calc-val" id="fgts-acum" oninput="marcarModificado('fgts-acum')" onfocus="limparAoFocar('fgts-acum')" onblur="formatarAoSair('fgts-acum')" placeholder="R$ 0,00">
         </div>
         <div class="field">
           <label>Multa FGTS <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="multa-fgts">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="multa-fgts" oninput="marcarModificado('multa-fgts')" onfocus="limparAoFocar('multa-fgts')" onblur="formatarAoSair('multa-fgts')" placeholder="R$ 0,00">
         </div>
         <div class="field">
           <label>Outros Créditos Rescisórios</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-rescisao" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-rescisao" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Total Rescisão <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="total-rescisao" style="font-size:12px; color:var(--yellow); font-weight: 600;">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="total-rescisao" style="font-size:12px; color:var(--yellow); font-weight: 600;" oninput="marcarModificado('total-rescisao')" onfocus="limparAoFocar('total-rescisao')" onblur="formatarAoSair('total-rescisao')" placeholder="R$ 0,00">
         </div>
       </div>
     </div>
@@ -949,68 +979,68 @@ html, body {
 
         <div class="field">
           <label>INSS <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="inss-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="inss-val" oninput="marcarModificado('inss-val')" onfocus="limparAoFocar('inss-val')" onblur="formatarAoSair('inss-val')" placeholder="R$ 0,00">
         </div>
         <div class="inss-info" id="inss-aliquota-info" style="margin-bottom:4px;"></div>
 
         <div class="field">
           <label>IRRF <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="irrf-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="irrf-val" oninput="marcarModificado('irrf-val')" onfocus="limparAoFocar('irrf-val')" onblur="formatarAoSair('irrf-val')" placeholder="R$ 0,00">
         </div>
         <!-- CAIXA DE AUDITORIA DO MÉTODO DO IRRF -->
         <div class="inss-info" id="irrf-info" style="margin-bottom:4px; display:none;"></div>
 
         <div class="field">
           <label>Dependentes (IRRF)</label>
-          <div class="input-wrap"><input type="text" inputmode="decimal" id="dependentes" placeholder="0" min="0" oninput="calcular()"></div>
+          <div class="input-wrap"><input type="text" inputmode="decimal" id="dependentes" placeholder="0" min="0" oninput="recalcular()"></div>
         </div>
 
         <div class="field">
           <label>VT Descontado (6% sal.)</label>
-          <div class="calc-val" id="vt-desc">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="vt-desc" oninput="marcarModificado('vt-desc')" onfocus="limparAoFocar('vt-desc')" onblur="formatarAoSair('vt-desc')" placeholder="R$ 0,00">
         </div>
 
         <div class="field">
           <label>Faltas</label>
-          <div class="input-wrap"><span class="pfx">Dias</span><input type="text" inputmode="decimal" id="faltas-dias" placeholder="0" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">Dias</span><input type="text" inputmode="decimal" id="faltas-dias" placeholder="0" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Desconto Faltas <span class="tag auto">AUTO</span></label>
-          <div class="calc-val" id="faltas-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="faltas-val" oninput="marcarModificado('faltas-val')" onfocus="limparAoFocar('faltas-val')" onblur="formatarAoSair('faltas-val')" placeholder="R$ 0,00">
         </div>
 
         <div class="field">
           <label>Atrasos</label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="atrasos" placeholder="0,00" oninput="calcular()"></div>
+            <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="atrasos" placeholder="0,00" oninput="recalcular()"></div>
             <select class="periodo-sel" id="per-atrasos" onchange="calcular()"><option value="mes">Mês</option><option value="semana">Sem</option><option value="dia">Dia</option></select>
           </div>
         </div>
         <div class="field">
           <label>Adiantamento</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="adiantamento" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="adiantamento" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div class="field">
           <label>Empréstimo</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="emprestimo" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="emprestimo" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         
         <!-- PENSÃO ALIMENTÍCIA REESTRUTURADA PARA VALOR OU PORCENTAGEM -->
         <div class="field">
           <label>Pensão Alimentícia</label>
           <div class="periodo-wrap">
-            <div class="input-wrap"><input type="text" inputmode="decimal" id="pensao" placeholder="0,00" oninput="calcular()"></div>
+            <div class="input-wrap"><input type="text" inputmode="decimal" id="pensao" placeholder="0,00" oninput="recalcular()"></div>
             <select class="periodo-sel" id="per-pensao" onchange="calcular()"><option value="rs">R$</option><option value="perc">% Sal.</option></select>
           </div>
         </div>
         <div class="field">
           <label>Desconto Pensão</label>
-          <div class="calc-val" id="pensao-val">R$ 0,00</div>
+          <input type="text" inputmode="decimal" class="calc-val" id="pensao-val" oninput="marcarModificado('pensao-val')" onfocus="limparAoFocar('pensao-val')" onblur="formatarAoSair('pensao-val')" placeholder="R$ 0,00">
         </div>
 
         <div class="field">
           <label>Outros Descontos</label>
-          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-desc" placeholder="0,00" oninput="calcular()"></div>
+          <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="outros-desc" placeholder="0,00" oninput="recalcular()"></div>
         </div>
         <div id="campos-desc-extras"></div>
         <div class="add-field-row">
@@ -1029,10 +1059,26 @@ html, body {
         <span class="chevron">▼</span>
       </div>
       <div class="section-body">
-        <div class="field"><label>Bruto Total</label><div class="calc-val" id="res-bruto">R$ 0,00</div></div>
-        <div class="field"><label>Total Benefícios</label><div class="calc-val" id="res-benef">R$ 0,00</div></div>
-        <div class="field"><label>Total Descontos</label><div class="calc-val" id="res-desc" style="color:var(--red); background:rgba(255,92,92,.06); border-color:rgba(255,92,92,.2);">R$ 0,00</div></div>
-        <div class="field"><label style="font-weight:600; color:var(--text);">Líquido a Receber</label><div class="calc-val" id="res-liquido" style="font-size:13px; font-weight:700;">R$ 0,00</div></div>
+        <div class="field">
+          <label>Bruto Total</label>
+          <input type="text" inputmode="decimal" class="calc-val" id="res-bruto" oninput="marcarModificado('res-bruto')" onfocus="limparAoFocar('res-bruto')" onblur="formatarAoSair('res-bruto')" placeholder="R$ 0,00">
+        </div>
+        <div class="field">
+          <label>Total Benefícios</label>
+          <input type="text" inputmode="decimal" class="calc-val" id="res-benef" oninput="marcarModificado('res-benef')" onfocus="limparAoFocar('res-benef')" onblur="formatarAoSair('res-benef')" placeholder="R$ 0,00">
+        </div>
+        <div class="field">
+          <label>Total Descontos</label>
+          <input type="text" inputmode="decimal" class="calc-val" id="res-desc" style="color:var(--red); background:rgba(255,92,92,.06); border-color:rgba(255,92,92,.2);" oninput="marcarModificado('res-desc')" onfocus="limparAoFocar('res-desc')" onblur="formatarAoSair('res-desc')" placeholder="R$ 0,00">
+        </div>
+        <div class="field">
+          <label style="font-weight:600; color:var(--text);">Líquido a Receber</label>
+          <input type="text" inputmode="decimal" class="calc-val" id="res-liquido" style="font-size:13px; font-weight:700;" oninput="marcarModificado('res-liquido')" onfocus="limparAoFocar('res-liquido')" onblur="formatarAoSair('res-liquido')" placeholder="R$ 0,00">
+        </div>
+        <div class="field">
+          <label style="font-weight:500; color:var(--muted2);">Pacote Total Remuneração</label>
+          <input type="text" inputmode="decimal" class="calc-val" id="res-pacote" style="font-size:11.5px; font-weight:600; color: var(--purple); background: rgba(139, 92, 246, 0.04); border-color: rgba(139, 92, 246, 0.15);" oninput="marcarModificado('res-pacote')" onfocus="limparAoFocar('res-pacote')" onblur="formatarAoSair('res-pacote')" placeholder="R$ 0,00">
+        </div>
       </div>
     </div>
 
@@ -1081,22 +1127,38 @@ html, body {
   </button>
 </div>
 
-<!-- PAINEL FIXO INFERIOR -->
+<!-- PAINEL FIXO INFERIOR (REORGANIZADO DE FORMA SEQUENCIAL E COMPACTA) -->
 <div class="painel-fixo">
   <div class="painel-item"><div class="pi-label">Ganhos Brutos</div><div class="pi-val green" id="pf-ganhos">R$ 0,00</div></div>
   <div class="painel-item"><div class="pi-label">Benefícios</div><div class="pi-val blue" id="pf-benef">R$ 0,00</div></div>
   <div class="painel-item"><div class="pi-label">Descontos</div><div class="pi-val red" id="pf-desc">R$ 0,00</div></div>
+  <div class="painel-item"><div class="pi-label">Líquido Final (Salário)</div><div class="pi-val green" id="pf-liquido">R$ 0,00</div></div>
+  <div class="painel-item"><div class="pi-label">Pacote Total (Remuneração)</div><div class="pi-val purple" id="pf-pacote">R$ 0,00</div></div>
   <div class="painel-item"><div class="pi-label">FGTS Mensal</div><div class="pi-val purple" id="pf-fgts">R$ 0,00</div></div>
   <div class="painel-item"><div class="pi-label">Férias Estimadas</div><div class="pi-val yellow" id="pf-ferias">R$ 0,00</div></div>
   <div class="painel-item"><div class="pi-label">13º Estimado</div><div class="pi-val yellow" id="pf-decimo">R$ 0,00</div></div>
   <div class="painel-item"><div class="pi-label">Rescisão Estimada</div><div class="pi-val blue" id="pf-rescisao">R$ 0,00</div></div>
-  <div class="painel-liquido">
-    <div class="pl-label">Líquido Final</div>
-    <div class="pl-val" id="pf-liquido">R$ 0,00</div>
-  </div>
 </div>
 
 <script>
+// ── TABELAS LEGAIS CENTRALIZADAS ───────────────────────
+const TABELA_INSS = [
+  { limite: 1621.00, aliq: 0.075 },
+  { limite: 2902.84, aliq: 0.09  },
+  { limite: 4354.27, aliq: 0.12  },
+  { limite: 8475.55, aliq: 0.14  }
+];
+const TETO_INSS = 988.09;
+
+const TABELA_IRRF = [
+  { ate: 2428.80,  aliq: 0,     ded: 0      },
+  { ate: 2826.65,  aliq: 0.075, ded: 182.16 },
+  { ate: 3751.05,  aliq: 0.15,  ded: 394.16 },
+  { ate: 4664.68,  aliq: 0.225, ded: 675.49 },
+  { ate: Infinity, aliq: 0.275, ded: 908.73 }
+];
+const DEDUCAO_SIMPLIFICADA_IRRF = 607.20;
+
 // ── VALIDAÇÕES ──────────────────────────────────────────────────────
 function validar(valor, min = 0, max = Infinity) {
   const num = parseFloat(valor) || 0;
@@ -1114,12 +1176,13 @@ function parseVal(raw) {
   if (v.includes(',')) v = v.replace(/\./g, '').replace(',', '.');
   const num = parseFloat(v) || 0;
   if (isPerc) {
-    const salBase = parseFloat((document.getElementById('salario')?.value||'').replace(/[^0-9,.-]/g,'').replace(',','.')) || 0;
+    const salBase = parseFloat((document.getElementById('salario')?.value||'').replace(/[^0-9,.-]/g,'').replace(/\./g, '').replace(',','.')) || 0;
     return salBase * (num / 100);
   }
   return num;
 }
 
+// Retorna valor do campo de input
 function val(id) {
   const el = document.getElementById(id);
   return el ? validar(parseVal(el.value)) : 0;
@@ -1150,10 +1213,69 @@ function atualizarRelogio() {
 setInterval(atualizarRelogio, 1000);
 atualizarRelogio();
 
+// ── DEBOUNCE DE CÁLCULO ─────────────────────────────────
+let timerCalculo;
+function recalcular() {
+  clearTimeout(timerCalculo);
+  timerCalculo = setTimeout(calcular, 100);
+}
+
 // ── ESTADO ───────────────────────────────────────────────────────────
 let camposExtras  = { ganhos: [], beneficios: [], descontos: [] };
 let _regimeTrabalho = 'clt';
 let _periculosoAtivo = false;
+let overrides = {}; // Armazena quais campos foram modificados manualmente pelo usuário
+
+// ── SISTEMA DE OVERRIDES PARA CAMPOS CALCULADOS ──────────────────────
+function marcarModificado(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  
+  overrides[id] = true;
+  el.classList.add('overridden');
+  calcular();
+}
+
+function limparAoFocar(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const valor = val(id);
+  el.value = valor !== 0 ? valor.toFixed(2).replace('.', ',') : '';
+}
+
+function formatarAoSair(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  
+  if (el.value.trim() === '') {
+    delete overrides[id];
+    el.classList.remove('overridden');
+    calcular();
+  } else {
+    calcular();
+    if (overrides[id]) {
+      el.value = fmt(val(id));
+    }
+  }
+}
+
+// Retorna o valor calculado automaticamente OU respeita a edição manual do usuário
+function obterValor(id, calculoFn) {
+  const el = document.getElementById(id);
+  if (!el) return 0;
+  
+  if (overrides[id]) {
+    return val(id);
+  }
+  
+  const valorCalculado = calculoFn();
+  
+  if (document.activeElement !== el) {
+    el.value = fmt(valorCalculado);
+  }
+  
+  return valorCalculado;
+}
 
 // ── EXIBIÇÃO DINÂMICA DO FGTS REAL ────────────────────────────────────
 function toggleFGTSInput() {
@@ -1170,7 +1292,7 @@ function toggleSection(id) {
   document.getElementById(id).classList.toggle('collapsed');
 }
 
-// ── CAMPOS EXTRAS ────────────────────────────────────────────────────
+// ── CAMPOS EXTRAS ──
 function addCampo(tipo) {
   const nomeId = tipo === 'ganhos' ? 'novo-ganho-nome' : tipo === 'beneficios' ? 'novo-benef-nome' : 'novo-desc-nome';
   const nome   = document.getElementById(nomeId).value.trim();
@@ -1178,7 +1300,7 @@ function addCampo(tipo) {
     alert('Digite o nome do campo');
     return;
   }
-  const uid = 'extra_' + tipo + '_' + Date.now();
+  const uid = 'extra_' + tipo + '_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
   camposExtras[tipo].push({ uid, nome });
   document.getElementById(nomeId).value = '';
   const containerId = tipo === 'ganhos' ? 'campos-ganhos-extras' : tipo === 'beneficios' ? 'campos-benef-extras' : 'campos-desc-extras';
@@ -1188,13 +1310,14 @@ function addCampo(tipo) {
   div.innerHTML = `
     <label>${nome} <button class="btn-remove" onclick="removeCampo('${uid}','${tipo}')">✕</button></label>
     <div class="periodo-wrap">
-      <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="${uid}" placeholder="0,00" oninput="calcular()"></div>
+      <div class="input-wrap"><span class="pfx">R$</span><input type="text" inputmode="decimal" id="${uid}" placeholder="0,00" oninput="recalcular()"></div>
       <select class="periodo-sel" id="per_${uid}" onchange="calcular()"><option value="mes">Mês</option><option value="dia">Dia</option></select>
     </div>`;
   document.getElementById(containerId).appendChild(div);
   calcular();
 }
 
+// ── REMOVER CAMPO ──
 function removeCampo(uid, tipo) {
   camposExtras[tipo] = camposExtras[tipo].filter(c => c.uid !== uid);
   document.getElementById('wrap_' + uid)?.remove();
@@ -1220,11 +1343,11 @@ function setRegime(regime) {
   if (regime === 'clt') {
     if (btnClt) btnClt.classList.add('ativo');
     if (btn12x36) btn12x36.classList.remove('ativo');
-    if (elDivisor) elDivisor.value = '220';
+    if (elDivisor && !overrides['divisor']) elDivisor.value = '220';
   } else {
     if (btnClt) btnClt.classList.remove('ativo');
     if (btn12x36) btn12x36.classList.add('ativo');
-    if (elDivisor) elDivisor.value = '180';
+    if (elDivisor && !overrides['divisor']) elDivisor.value = '180';
   }
   calcular();
 }
@@ -1331,7 +1454,7 @@ function calcularMesesFeriasProp(inicio, fim) {
     meses--;
   }
   
-  if (dias >= 15) {
+  if (dias + 1 >= 15) {
     meses++;
   }
   
@@ -1340,17 +1463,10 @@ function calcularMesesFeriasProp(inicio, fim) {
 
 // ── INSS 2026 progressivo com TETO ─────────────────────────────────
 function calcINSS(base) {
-  const faixas = [
-    { limite: 1621.00, aliq: 0.075 },
-    { limite: 2902.84, aliq: 0.09  },
-    { limite: 4354.27, aliq: 0.12  },
-    { limite: 8475.55, aliq: 0.14  }
-  ];
-  
   let inss = 0;
   let anterior = 0;
   
-  for (const f of faixas) {
+  for (const f of TABELA_INSS) {
     if (base > f.limite) {
       inss += (f.limite - anterior) * f.aliq;
       anterior = f.limite;
@@ -1361,7 +1477,7 @@ function calcINSS(base) {
     }
   }
   
-  return Math.min(inss, 988.09);
+  return Math.min(inss, TETO_INSS);
 }
 
 // ── IRRF 2026 com dedução de dependentes e redutor Lei 15.270/2025 ──
@@ -1369,21 +1485,13 @@ function calcIRRF(rendimentoTributavel, inss, dependentes, pensao) {
   if (rendimentoTributavel <= 0) return { valor: 0, metodo: "Sem incidência" };
   
   const deducaoLegal = inss + (dependentes * 189.59) + pensao;
-  const deducaoSimplificada = 607.20;
+  const deducaoSimplificada = DEDUCAO_SIMPLIFICADA_IRRF;
   
   const baseLegal = Math.max(0, rendimentoTributavel - deducaoLegal);
   const baseSimplificada = Math.max(0, rendimentoTributavel - deducaoSimplificada);
   
-  const faixasIR = [
-    { ate: 2428.80,  aliq: 0,     ded: 0      },
-    { ate: 2826.65,  aliq: 0.075, ded: 182.16 },
-    { ate: 3751.05,  aliq: 0.15,  ded: 394.16 },
-    { ate: 4664.68,  aliq: 0.225, ded: 675.49 },
-    { ate: Infinity, aliq: 0.275, ded: 908.73 }
-  ];
-  
   function calcularImpostoPuro(base) {
-    for (const f of faixasIR) {
+    for (const f of TABELA_IRRF) {
       if (base <= f.ate) {
         return Math.max(0, (base * f.aliq) - f.ded);
       }
@@ -1394,7 +1502,6 @@ function calcIRRF(rendimentoTributavel, inss, dependentes, pensao) {
   const irLegal = calcularImpostoPuro(baseLegal);
   const irSimplificado = calcularImpostoPuro(baseSimplificada);
   
-  // Escolhe a base mais vantajosa (Deduções vs Simplificado)
   let irBase = 0;
   let metodoEscolha = "";
   if (irLegal < irSimplificado) {
@@ -1405,133 +1512,145 @@ function calcIRRF(rendimentoTributavel, inss, dependentes, pensao) {
     metodoEscolha = "Desconto Simplificado";
   }
   
-  let redutorAdicional = 0;
+  let irFinal = irBase;
   if (rendimentoTributavel <= 5000.00) {
-    redutorAdicional = 312.89; 
+    irFinal = 0; 
   } else if (rendimentoTributavel <= 7350.00) {
-    redutorAdicional = 978.62 - (0.133145 * rendimentoTributavel);
+    const redutorAdicional = 978.62 - (0.133145 * rendimentoTributavel);
+    irFinal = Math.max(0, irBase - Math.max(0, redutorAdicional));
   }
   
-  const irFinal = Math.max(0, irBase - Math.max(0, redutorAdicional));
   return { valor: irFinal, metodo: metodoEscolha };
 }
 
-// ── CALCULAR (chamado a cada input) ──────────────────────────────────
-function calcular() {
-  // 1. Inputs críticos
-  const sal      = validar(val('salario'), 0, 999999);
-  const diasMes  = validar(val('dias-por-mes'), 1, 31) || 30;
-  const divisor  = validar(val('divisor'), 1, 400) || 220;
+// ── BLOCOS AUXILIARES INTERNOS DE CÁLCULO ───────────────────────────
+function calcularGanhos(ctx) {
+  ctx.insalubridadeVal = obterValor('insalubridade-val', () => {
+    const insalubridadeGrau = parseFloat(document.getElementById('insalubridade-grau')?.value) || 0;
+    return (1621.00 * insalubridadeGrau) / 100;
+  });
 
-  // 2. Adicionais de Insalubridade e Periculosidade com automação da CLT
-  const insalubridadeGrau = parseFloat(document.getElementById('insalubridade-grau')?.value) || 0;
-  const insalubridadeVal = (1621.00 * insalubridadeGrau) / 100; // Baseado no salário mínimo de 2026 (R$ 1.621,00)
-  setEl('insalubridade-val', fmt(insalubridadeVal));
+  ctx.periculosidadeVal = obterValor('periculosidade-val', () => {
+    return _periculosoAtivo ? (ctx.sal * 0.30) : 0;
+  });
 
-  const periculosidadeVal = _periculosoAtivo ? (sal * 0.30) : 0; // 30% do salário base (Art. 193 CLT)
-  setEl('periculosidade-val', fmt(periculosidadeVal));
+  ctx.he50Val = obterValor('he50-val', () => {
+    const baseCalculoHoras = ctx.sal + ctx.insalubridadeVal + ctx.periculosidadeVal;
+    const horaVal  = baseCalculoHoras > 0 ? baseCalculoHoras / ctx.divisor : 0;
+    const percHE50  = validar(val('perc-he50'), 0, 500) / 100;
+    return horaVal > 0 ? valPer('he50-horas','per-he50') * horaVal * (1 + percHE50) : 0;
+  });
 
-  // 3. Valor da hora baseado no salário + adicionais habituais (Súmula 264 TST)
-  const baseCalculoHoras = sal + insalubridadeVal + periculosidadeVal;
-  const horaVal  = baseCalculoHoras > 0 ? baseCalculoHoras / divisor : 0;
+  ctx.he100Val = obterValor('he100-val', () => {
+    const baseCalculoHoras = ctx.sal + ctx.insalubridadeVal + ctx.periculosidadeVal;
+    const horaVal  = baseCalculoHoras > 0 ? baseCalculoHoras / ctx.divisor : 0;
+    const percHE100 = validar(val('perc-he100'), 0, 500) / 100;
+    return horaVal > 0 ? valPer('he100-horas','per-he100') * horaVal * (1 + percHE100) : 0;
+  });
 
-  // 4. Horas Extras
-  const percHE50  = validar(val('perc-he50'), 0, 500) / 100;
-  const percHE100 = validar(val('perc-he100'), 0, 500) / 100;
-  const he50Val   = horaVal > 0 ? valPer('he50-horas','per-he50')   * horaVal * (1 + percHE50) : 0;
-  const he100Val  = horaVal > 0 ? valPer('he100-horas','per-he100') * horaVal * (1 + percHE100) : 0;
-  setEl('he50-val',  fmt(he50Val));
-  setEl('he100-val', fmt(he100Val));
+  ctx.noturnoVal = obterValor('noturno-val', () => {
+    const baseCalculoHoras = ctx.sal + ctx.insalubridadeVal + ctx.periculosidadeVal;
+    const horaVal  = baseCalculoHoras > 0 ? baseCalculoHoras / ctx.divisor : 0;
+    const percNoturno = validar(val('perc-noturno'), 0, 100) / 100;
+    const horasNoturnas = valPer('noturno-horas', 'per-noturno');
+    return horaVal > 0 ? horasNoturnas * horaVal * percNoturno : 0;
+  });
 
-  // 5. Adicional Noturno em Horas
-  const percNoturno = validar(val('perc-noturno'), 0, 100) / 100;
-  const horasNoturnas = valPer('noturno-horas', 'per-noturno');
-  const noturnoVal = horaVal > 0 ? horasNoturnas * horaVal * percNoturno : 0;
-  setEl('noturno-val', fmt(noturnoVal));
+  ctx.dsrVal = obterValor('dsr-val', () => {
+    const dsrUteis = validar(val('dsr-uteis'), 1, 31) || 26;
+    const dsrDomingos = validar(val('dsr-domingos'), 0, 31) || 4;
+    return (ctx.he50Val + ctx.he100Val + ctx.noturnoVal) > 0 ? ((ctx.he50Val + ctx.he100Val + ctx.noturnoVal) / dsrUteis) * dsrDomingos : 0;
+  });
 
-  // 6. Reflexo do DSR sobre Horas Extras e Adicional Noturno
-  const dsrUteis = validar(val('dsr-uteis'), 1, 31) || 26;
-  const dsrDomingos = validar(val('dsr-domingos'), 0, 31) || 4;
-  const dsrVal = (he50Val + he100Val + noturnoVal) > 0 ? ((he50Val + he100Val + noturnoVal) / dsrUteis) * dsrDomingos : 0;
-  setEl('dsr-val', fmt(dsrVal));
+  ctx.assiduidadeVal = obterValor('assiduidade-val', () => {
+    const percAssiduidade = validar(val('perc-assiduidade'), 0, 100) / 100;
+    return ctx.sal * percAssiduidade;
+  });
 
-  // Integração completa de adicionais na remuneração mensal
-  const adicionais =
-    he50Val + he100Val +
-    noturnoVal +
-    dsrVal +
-    insalubridadeVal +
-    periculosidadeVal;
+  ctx.adicionais = ctx.he50Val + ctx.he100Val + ctx.noturnoVal + ctx.dsrVal + ctx.insalubridadeVal + ctx.periculosidadeVal;
 
-  // 7. Ganhos comuns (PLR separado de base tributável comum)
-  const plr = val('plr');
-  
-  // Assiduidade como percentual sobre o salário base
-  const percAssiduidade = validar(val('perc-assiduidade'), 0, 100) / 100;
-  const assiduidadeVal = sal * percAssiduidade;
-
-  const ganhosTributaveis =
-    sal +
-    assiduidadeVal +
+  ctx.ganhosTributaveis =
+    ctx.sal +
+    ctx.assiduidadeVal +
     valPer('comissao','per-comissao') +
     valPer('gratificacao','per-gratificacao') +
     valPer('bonificacao','per-bonificacao') +
     val('outros-ganhos') +
     somaExtras('ganhos');
 
-  const baseTributariaMensal = ganhosTributaveis + adicionais;
-  const totalGanhos = baseTributariaMensal + plr;
+  ctx.baseTributariaMensal = ctx.ganhosTributaveis + ctx.adicionais;
+  ctx.plr = val('plr');
 
-  // 8. Benefícios
-  const beneficios =
-    val('vt') + val('passe') + val('va') + val('vr') + val('cesta') +
-    val('combustivel') + val('creche') + val('plano-saude') +
-    val('plano-odonto') + val('seguro-vida') + val('outros-benef') + somaExtras('beneficios');
+  ctx.totalGanhos = obterValor('res-bruto', () => {
+    return ctx.baseTributariaMensal + ctx.plr;
+  });
 
-  // 9. Direitos Automáticos
-  const percFGTS   = validar(val('perc-fgts'), 0, 100) / 100;
-  const percFerias = validar(val('perc-ferias'), 0, 100) / 100;
-  const percTerco  = validar(val('perc-terco'), 0, 100) / 100;
+  // REMUNERAÇÃO BASE INTEGRADA (Conforme Art. 457 da CLT)
+  ctx.remuneracaoBase = ctx.sal + ctx.insalubridadeVal + ctx.periculosidadeVal + ctx.assiduidadeVal;
+}
 
-  const fgtsMensal   = baseTributariaMensal * percFGTS;
-  const feriasVal    = sal * percFerias;
-  const tercoVal     = feriasVal * percTerco;
-  const totalFeriasV = feriasVal + tercoVal;
-  const decimoVal    = sal > 0 ? sal / 12 : 0;
+function calcularBeneficios(ctx) {
+  ctx.totalBeneficios = obterValor('res-benef', () => {
+    return val('vt') + val('passe') + val('va') + val('vr') + val('cesta') +
+           val('combustivel') + val('creche') + val('plano-saude') +
+           val('plano-odonto') + val('seguro-vida') + val('outros-benef') + somaExtras('beneficios');
+  });
+}
 
-  setEl('fgts-val',         fmt(fgtsMensal));
-  setEl('ferias-val',       fmt(feriasVal));
-  setEl('terco-val',        fmt(tercoVal));
-  setEl('total-ferias-val', fmt(totalFeriasV));
-  setEl('decimo-val',       fmt(decimoVal));
+function calcularDescontos(ctx) {
+  ctx.fgtsMensal = obterValor('fgts-val', () => {
+    const percFGTS   = validar(val('perc-fgts'), 0, 100) / 100;
+    return ctx.baseTributariaMensal * percFGTS;
+  });
 
-  // INSS 2026 progressivo com teto
-  const inss = calcINSS(baseTributariaMensal);
-  const aliqEf = baseTributariaMensal > 0 ? ((inss / baseTributariaMensal) * 100).toFixed(2) : '0,00';
-  setEl('inss-val', fmt(inss));
-  setEl('inss-aliquota-info', `Alíquota efetiva: ${aliqEf}% | Base: ${fmt(baseTributariaMensal)} | Teto desc.: R$ 988,09`);
-  setEl('inss-info', sal > 0 ? `Tabela progressiva INSS 2026 sobre ${fmt(baseTributariaMensal)}` : 'Informe as datas para calcular automaticamente.');
+  ctx.feriasVal = obterValor('ferias-val', () => {
+    const percFerias = validar(val('perc-ferias'), 0, 100) / 100;
+    if (ctx.dtAdmRaw && ctx.dtDemRaw) {
+      return (ctx.remuneracaoBase * (ctx.mesesFerProp / 12)) * percFerias;
+    }
+    return ctx.remuneracaoBase * percFerias;
+  });
 
-  // 10. Desconto Pensão Alimentícia por valor ou por percentual
-  const pensaoTipo = document.getElementById('per-pensao')?.value || 'rs';
-  const pensaoInput = val('pensao');
-  let pensaoVal = 0;
-  if (pensaoTipo === 'perc') {
-    pensaoVal = sal * (pensaoInput / 100);
-  } else {
-    pensaoVal = pensaoInput;
-  }
-  setEl('pensao-val', fmt(pensaoVal));
+  ctx.tercoVal = obterValor('terco-val', () => {
+    const percTerco  = validar(val('perc-terco'), 0, 100) / 100;
+    return ctx.feriasVal * percTerco;
+  });
 
-  // IRRF 2026 progressivo com auditoria de método e base líquida
-  const irrfObj = calcIRRF(baseTributariaMensal, inss, validar(val('dependentes'), 0, 20), pensaoVal);
-  const irrf = irrfObj.valor;
-  setEl('irrf-val', fmt(irrf));
+  ctx.totalFeriasV = obterValor('total-ferias-val', () => {
+    return ctx.feriasVal + ctx.tercoVal;
+  });
+
+  ctx.decimoVal = obterValor('decimo-val', () => {
+    if (ctx.dtAdmRaw && ctx.dtDemRaw) {
+      return (ctx.remuneracaoBase / 12) * Math.min(ctx.mesesDecimo, 12);
+    }
+    return ctx.remuneracaoBase > 0 ? ctx.remuneracaoBase / 12 : 0;
+  });
+
+  ctx.inss = obterValor('inss-val', () => {
+    return calcINSS(ctx.baseTributariaMensal);
+  });
+  
+  const aliqEf = ctx.baseTributariaMensal > 0 ? ((ctx.inss / ctx.baseTributariaMensal) * 100).toFixed(2) : '0,00';
+  setEl('inss-aliquota-info', `Alíquota efetiva: ${aliqEf}% | Base: ${fmt(ctx.baseTributariaMensal)} | Teto desc.: R$ 988,09`);
+  setEl('inss-info', ctx.sal > 0 ? `Tabela progressiva INSS 2026 sobre ${fmt(ctx.baseTributariaMensal)}` : 'Informe as datas para calcular automaticamente.');
+
+  ctx.pensaoVal = obterValor('pensao-val', () => {
+    const pensaoTipo = document.getElementById('per-pensao')?.value || 'rs';
+    const pensaoInput = val('pensao');
+    return pensaoTipo === 'perc' ? (ctx.sal * (pensaoInput / 100)) : pensaoInput;
+  });
+
+  ctx.irrf = obterValor('irrf-val', () => {
+    const irrfObj = calcIRRF(ctx.baseTributariaMensal, ctx.inss, validar(val('dependentes'), 0, 20), ctx.pensaoVal);
+    return irrfObj.valor;
+  });
   
   const elIrrfInfo = document.getElementById('irrf-info');
   if (elIrrfInfo) {
-    if (sal > 0) {
-      const baseDeduzida = Math.max(0, baseTributariaMensal - inss - (validar(val('dependentes'), 0, 20) * 189.59) - pensaoVal);
+    if (ctx.sal > 0) {
+      const irrfObj = calcIRRF(ctx.baseTributariaMensal, ctx.inss, validar(val('dependentes'), 0, 20), ctx.pensaoVal);
+      const baseDeduzida = Math.max(0, ctx.baseTributariaMensal - ctx.inss - (validar(val('dependentes'), 0, 20) * 189.59) - ctx.pensaoVal);
       elIrrfInfo.textContent = `Audit.: ${irrfObj.metodo} | Base líq.: ${fmt(baseDeduzida)}`;
       elIrrfInfo.style.display = 'block';
     } else {
@@ -1539,202 +1658,316 @@ function calcular() {
     }
   }
 
-  // VT desconto - máximo 6% do salário ou o valor total de VT/Passe
-  const vtTotal = val('vt') + val('passe');
-  const vtMax = sal * 0.06;
-  const vtDesc = Math.min(vtMax, vtTotal);
-  setEl('vt-desc', fmt(vtDesc));
+  // Desconto de VT mantido sobre o salário-base nominal (Regra Legal Decreto 95.247/87)
+  ctx.vtDesc = obterValor('vt-desc', () => {
+    const vtTotal = val('vt') + val('passe');
+    const vtMax = ctx.sal * 0.06;
+    return Math.min(vtMax, vtTotal);
+  });
 
-  // Faltas
-  const faltasDesc = sal > 0 ? (sal / diasMes) * validar(val('faltas-dias'), 0, 31) : 0;
-  setEl('faltas-val', fmt(faltasDesc));
+  ctx.faltasDesc = obterValor('faltas-val', () => {
+    return ctx.remuneracaoBase > 0 ? (ctx.remuneracaoBase / ctx.diasMes) * validar(val('faltas-dias'), 0, 31) : 0;
+  });
 
-  // TOTAL DESCONTOS
-  const totalDescontos =
-    inss + irrf + vtDesc + faltasDesc +
-    valPer('atrasos','per-atrasos') +
-    val('adiantamento') + val('emprestimo') +
-    pensaoVal +
-    val('outros-desc') + somaExtras('descontos');
+  ctx.totalDescontos = obterValor('res-desc', () => {
+    return ctx.inss + ctx.irrf + ctx.vtDesc + ctx.faltasDesc +
+           valPer('atrasos','per-atrasos') +
+           val('adiantamento') + val('emprestimo') +
+           ctx.pensaoVal +
+           val('outros-desc') + somaExtras('descontos');
+  });
+}
 
-  // 11. Tempo de serviço pelas datas civis
-  const dtAdmRaw = document.getElementById('data-admissao')?.value;
-  const dtDemRaw = document.getElementById('data-demissao')?.value;
+function calcularRescisao(ctx) {
+  // Saldo de salário baseado na remuneração integrada
+  ctx.saldoSal = obterValor('saldo-sal', () => {
+    return ctx.remuneracaoBase > 0 ? (ctx.remuneracaoBase / ctx.diasMes) * ctx.tempoDias : 0;
+  });
+
+  ctx.adiantamentoDecimo = val('adiantamento-decimo');
   
-  let tempoTexto = '—';
-  let totalMesesF = 0;
-  let anosCompletos = 0;
-  let mesesDecimo = 0;
-  let mesesFerProp = 0;
-  let tempoDias = 0;
+  // 13º proporcional baseado na remuneração integrada
+  ctx.decimoProp = obterValor('decimo-prop', () => {
+    const calcDecimo = ctx.remuneracaoBase > 0 ? (ctx.remuneracaoBase / 12) * Math.min(ctx.mesesDecimo, 12) : 0;
+    return Math.max(0, calcDecimo - ctx.adiantamentoDecimo);
+  });
+  setEl('decimo-prop-info', ctx.adiantamentoDecimo > 0 ? `(Dedução de R$ ${ctx.adiantamentoDecimo.toFixed(2)} já considerada)` : '');
 
-  if (dtAdmRaw && dtDemRaw) {
-    const dtAdm = new Date(dtAdmRaw + 'T00:00:00'); 
-    const dtDem = new Date(dtDemRaw + 'T00:00:00');
-    
-    if (dtDem >= dtAdm) {
-      const intervalo = calcularIntervalo(dtAdm, dtDem);
-      anosCompletos = intervalo.anos;
-      totalMesesF = intervalo.totalMeses;
-      tempoDias = dtDem.getDate(); 
-      
-      tempoTexto = `${intervalo.anos} ano(s), ${intervalo.meses} mês(es), ${intervalo.dias} dia(s)`;
-      
-      mesesDecimo = calcularMeses13(dtAdm, dtDem);
-      mesesFerProp = calcularMesesFeriasProp(dtAdm, dtDem);
+  // Férias proporcionais + 1/3 baseadas na remuneração integrada
+  ctx.feriasProp = obterValor('ferias-prop', () => {
+    const percTerco = validar(val('perc-terco'), 0, 100) / 100;
+    return ctx.remuneracaoBase > 0 ? (ctx.remuneracaoBase / 12) * ctx.mesesFerProp * (1 + percTerco) : 0;
+  });
+
+  // Férias vencidas baseadas na remuneração integrada
+  ctx.feriasVencCalc = obterValor('ferias-vencidas-calc', () => {
+    const anosVencidos = val('ferias-vencidas-anos');
+    const percTerco = validar(val('perc-terco'), 0, 100) / 100;
+    const dobroChecked = document.getElementById('ferias-dobro')?.checked;
+    const multVencidas = dobroChecked ? 2 : 1;
+    return ctx.remuneracaoBase > 0 ? (ctx.remuneracaoBase * anosVencidos * multVencidas) * (1 + percTerco) : 0;
+  });
+
+  // Aviso Prévio baseado na remuneração integrada
+  ctx.avisoVal = obterValor('aviso-val', () => {
+    if (ctx.motivoRescisao === 'dispensa') {
+      return (ctx.avisoTipo === 'indenizado') ? ctx.valorAvisoCalculado : 0;
     } else {
-      tempoTexto = '⚠️ Demissão anterior à Admissão';
+      return (ctx.avisoTipo === 'descontado') ? -ctx.remuneracaoBase : 0;
     }
-  }
-  setEl('tempo-resumo', tempoTexto);
+  });
 
-  // 12. Rescisão - cálculos e variáveis
-  const percMulta  = validar(val('perc-multa-fgts'), 0, 100) / 100;
-
-  // Saldo de salário
-  const saldoSal   = sal > 0 ? (sal / diasMes) * tempoDias : 0;
-
-  // 13º proporcional
-  const decimoProp  = sal > 0 ? (sal / 12) * Math.min(mesesDecimo, 12) : 0;
-  
-  // Desconto da 1ª parcela de 13º (Adiantamento recebido anteriormente)
-  const adiantamentoDecimo = val('adiantamento-decimo');
-  const decimoLiquido = Math.max(0, decimoProp - adiantamentoDecimo);
-
-  // Férias proporcionais
-  const feriasProp   = sal > 0 ? (sal / 12) * mesesFerProp * (1 + percTerco) : 0;
-
-  // Férias Vencidas (Anos simples digitados)
-  const anosVencidos = val('ferias-vencidas-anos');
-  let multFeriasVencidas = 0;
-  if (anosVencidos > 0) {
-    // Regra da CLT (Art. 137)
-    multFeriasVencidas = 1 + (anosVencidos - 1) * 2;
-  }
-  const feriasVencCalc = sal > 0 ? (sal * multFeriasVencidas) * (1 + percTerco) : 0;
-
-  // Aviso prévio
-  const motivoRescisao = document.getElementById('motivo-rescisao')?.value || 'dispensa';
-  const avisoTipo = document.getElementById('aviso-tipo')?.value || 'indenizado';
-  
-  let diasAviso = 30;
-  if (motivoRescisao === 'dispensa') {
-    diasAviso = Math.min(30 + anosCompletos * 3, 90);
+  if (ctx.avisoVal > 0) {
+    setEl('aviso-val-info', '(Crédito p/ Funcionário)');
+  } else if (ctx.avisoVal < 0) {
+    setEl('aviso-val-info', '(Débito / Desconto)');
   } else {
-    diasAviso = 30; 
+    setEl('aviso-val-info', '(Neutro / Sem Ônus)');
   }
-  
-  const valorDiaAviso = sal / 30;
-  const valorAvisoCalculado = sal > 0 ? valorDiaAviso * diasAviso : 0;
-  
-  let avisoCredito = 0; 
-  let avisoDebito = 0;  
+
   let avisoInfoLabel = "";
-
-  const elAvisoTipo = document.getElementById('aviso-tipo');
-  const avisoInfoText = document.getElementById('aviso-info-text');
-
-  if (motivoRescisao === 'dispensa') {
-    if (avisoTipo === 'descontado' || avisoTipo === 'dispensado') {
-      elAvisoTipo.value = 'indenizado';
+  if (ctx.dtAdmRaw && ctx.dtDemRaw) {
+    if (ctx.motivoRescisao === 'dispensa') {
+      if (ctx.avisoTipo === 'indenizado') {
+        avisoInfoLabel = `✅ Dispensa sem justa causa com Aviso Indenizado. O trabalhador recebe +1 remuneração proporcional (${ctx.diasAviso} dias).`;
+      } else {
+        avisoInfoLabel = `ℹ️ Dispensa com Aviso Trabalhado (${ctx.diasAviso} dias). Recebe o período trabalhado diretamente como saldo de salário.`;
+      }
+    } else if (ctx.motivoRescisao === 'pedido') {
+      if (ctx.avisoTipo === 'trabalhado') {
+        avisoInfoLabel = `ℹ️ Pedido de Demissão com Aviso Trabalhado. Sem desconto de aviso prévio.`;
+      } else if (ctx.avisoTipo === 'descontado') {
+        avisoInfoLabel = `⚠️ Pedido de Demissão com Aviso Não Cumprido. Será descontado 1 salário nominal integrado do funcionário (R$ ${ctx.remuneracaoBase.toFixed(2)}).`;
+      } else if (ctx.avisoTipo === 'dispensado') {
+        avisoInfoLabel = `ℹ️ Pedido de Demissão com Aviso Dispensado. O empregador liberou o funcionário do cumprimento sem aplicar descontos.`;
+      }
     }
-    if (elAvisoTipo.options[0]) elAvisoTipo.options[0].disabled = false; 
-    if (elAvisoTipo.options[1]) elAvisoTipo.options[1].disabled = false; 
-    if (elAvisoTipo.options[2]) elAvisoTipo.options[2].disabled = true;  
-    if (elAvisoTipo.options[3]) elAvisoTipo.options[3].disabled = true;  
-
-    if (elAvisoTipo.value === 'indenizado') {
-      avisoCredito = valorAvisoCalculado;
-      avisoInfoLabel = `✅ Dispensa sem justa causa com Aviso Indenizado. O trabalhador recebe +1 salário proporcional (${diasAviso} dias).`;
-    } else {
-      avisoCredito = 0;
-      avisoInfoLabel = `ℹ️ Dispensa com Aviso Trabalhado (${diasAviso} dias). Recebe o período trabalhado diretamente como saldo de salário.`;
-    }
-  } else if (motivoRescisao === 'pedido') {
-    if (avisoTipo === 'indenizado') {
-      elAvisoTipo.value = 'trabalhado';
-    }
-    if (elAvisoTipo.options[0]) elAvisoTipo.options[0].disabled = true;  
-    if (elAvisoTipo.options[1]) elAvisoTipo.options[1].disabled = false; 
-    if (elAvisoTipo.options[2]) elAvisoTipo.options[2].disabled = false; 
-    if (elAvisoTipo.options[3]) elAvisoTipo.options[3].disabled = false; 
-
-    if (elAvisoTipo.value === 'trabalhado') {
-      avisoDebito = 0;
-      avisoInfoLabel = `ℹ️ Pedido de Demissão com Aviso Trabalhado. Sem desconto de aviso prévio.`;
-    } else if (elAvisoTipo.value === 'descontado') {
-      avisoDebito = sal; 
-      avisoInfoLabel = `⚠️ Pedido de Demissão com Aviso Não Cumprido. Será descontado 1 salário nominal do funcionário (R$ ${sal.toFixed(2)}).`;
-    } else if (elAvisoTipo.value === 'dispensado') {
-      avisoDebito = 0;
-      avisoInfoLabel = `ℹ️ Pedido de Demissão com Aviso Dispensado. O empregador liberou o funcionário do cumprimento sem aplicar descontos.`;
-    }
-  }
-
-  // ALERTA DE DATAS EM BRANCO
-  if (!dtAdmRaw || !dtDemRaw) {
+  } else {
     avisoInfoLabel = "⚠️ Preencha as datas de Admissão e Demissão no topo para que a calculadora compute as verbas rescisórias (saldo de salário, 13º proporcional e férias profissionais).";
   }
 
+  const avisoInfoText = document.getElementById('aviso-info-text');
   if (avisoInfoText) {
     avisoInfoText.textContent = avisoInfoLabel;
     avisoInfoText.style.display = 'block';
   }
 
-  // Origem do FGTS para Multa
-  const fgtsOrigem = document.getElementById('fgts-origem')?.value || 'estimado';
-  let fgtsAcum = 0;
-  if (fgtsOrigem === 'real') {
-    fgtsAcum = val('fgts-saldo-real');
-  } else {
-    fgtsAcum = baseTributariaMensal * percFGTS * totalMesesF;
-  }
-  const multaFGTS  = fgtsAcum * percMulta;
-  const outrosResc  = val('outros-rescisao');
+  ctx.fgtsAcum = obterValor('fgts-acum', () => {
+    const fgtsOrigem = document.getElementById('fgts-origem')?.value || 'estimado';
+    if (fgtsOrigem === 'real') {
+      return val('fgts-saldo-real');
+    } else {
+      const percFGTS = validar(val('perc-fgts'), 0, 100) / 100;
+      return ctx.baseTributariaMensal * percFGTS * ctx.totalMesesF;
+    }
+  });
+  
+  const fgtsOrigemText = document.getElementById('fgts-origem')?.value || 'estimado';
+  setEl('fgts-acum-info', fgtsOrigemText === 'real' ? '(Extrato CEF)' : '(Projeção de datas)');
 
-  // Total Rescisório estruturado
-  const totalResc = saldoSal + decimoLiquido + feriasProp + feriasVencCalc + avisoCredito + multaFGTS + outrosResc - avisoDebito;
+  ctx.multaFGTS = obterValor('multa-fgts', () => {
+    if (ctx.motivoRescisao === 'pedido') return 0;
+    const percDelta = validar(val('perc-multa-fgts'), 0, 100) / 100;
+    return ctx.fgtsAcum * percDelta;
+  });
+  
+  ctx.outrosResc = val('outros-rescisao');
 
-  // ── ATUALIZAÇÕES DO DOM ──
-  setEl('assiduidade-val', fmt(assiduidadeVal));
-  setEl('saldo-sal',      fmt(saldoSal));
-  setEl('decimo-prop',    fmt(decimoLiquido) + (adiantamentoDecimo > 0 ? ` (Desc. R$ ${adiantamentoDecimo.toFixed(2)})` : ''));
-  setEl('ferias-prop',    fmt(feriasProp));
-  setEl('ferias-vencidas-calc', fmt(feriasVencCalc));
-  setEl('fgts-acum',      fmt(fgtsAcum) + (fgtsOrigem === 'real' ? ' (Extrato)' : ' (Projeção)'));
-  setEl('multa-fgts',     fmt(multaFGTS));
-  setEl('total-rescisao', fmt(totalResc));
-
-  if (avisoCredito > 0) {
-    setEl('aviso-val', fmt(avisoCredito) + ' (Crédito)');
-  } else if (avisoDebito > 0) {
-    setEl('aviso-val', fmt(-avisoDebito) + ' (Débito)');
-  } else {
-    setEl('aviso-val', fmt(0) + ' (Neutro)');
-  }
-
-  // RESUMO MENSAL
-  const liquido = totalGanhos + beneficios - totalDescontos;
-  setEl('res-bruto',   fmt(totalGanhos));
-  setEl('res-benef',   fmt(beneficios));
-  setEl('res-desc',    fmt(totalDescontos));
-  setEl('res-liquido', fmt(liquido));
-
-  // PAINEL FIXO DE CONTROLE
-  setEl('pf-ganhos',   fmt(totalGanhos));
-  setEl('pf-benef',    fmt(beneficios));
-  setEl('pf-desc',     fmt(totalDescontos));
-  setEl('pf-fgts',     fmt(fgtsMensal));
-  setEl('pf-ferias',   fmt(totalFeriasV));
-  setEl('pf-decimo',   fmt(decimoVal));
-  setEl('pf-rescisao', fmt(totalResc));
-  setEl('pf-liquido',  fmt(liquido));
-
-  const plv = document.getElementById('pf-liquido');
-  if (plv) plv.style.color = liquido >= 0 ? 'var(--green)' : 'var(--red)';
+  ctx.totalResc = obterValor('total-rescisao', () => {
+    return ctx.saldoSal + ctx.decimoProp + ctx.feriasProp + ctx.feriasVencCalc + ctx.avisoVal + ctx.multaFGTS + ctx.outrosResc;
+  });
 }
 
-// Inicializa cálculos ao carregar
+function atualizarPainel(ctx) {
+  ctx.liquido = obterValor('res-liquido', () => {
+    return ctx.totalGanhos - ctx.totalDescontos;
+  });
+
+  ctx.pacoteTotal = obterValor('res-pacote', () => {
+    return ctx.liquido + ctx.totalBeneficios;
+  });
+
+  setEl('pf-ganhos',   fmt(ctx.totalGanhos));
+  setEl('pf-benef',    fmt(ctx.totalBeneficios));
+  setEl('pf-desc',     fmt(ctx.totalDescontos));
+  setEl('pf-fgts',     fmt(ctx.fgtsMensal));
+  setEl('pf-ferias',   fmt(ctx.totalFeriasV));
+  setEl('pf-decimo',   fmt(ctx.decimoVal));
+  setEl('pf-rescisao', fmt(ctx.totalResc));
+  setEl('pf-liquido',  fmt(ctx.liquido));
+  setEl('pf-pacote',   fmt(ctx.pacoteTotal));
+
+  const plv = document.getElementById('pf-liquido');
+  if (plv) plv.style.color = ctx.liquido >= 0 ? 'var(--green)' : 'var(--red)';
+}
+
+// ── FUNÇÃO PRINCIPAL CALCULAR ────────────────────────────────────────
+function calcular() {
+  let ctx = {};
+
+  ctx.sal      = validar(val('salario'), 0, 999999);
+  ctx.diasMes  = validar(val('dias-por-mes'), 1, 31) || 30;
+  ctx.divisor  = validar(val('divisor'), 1, 400) || 220;
+
+  ctx.dtAdmRaw = document.getElementById('data-admissao')?.value;
+  ctx.dtDemRaw = document.getElementById('data-demissao')?.value;
+  
+  ctx.tempoTexto = '—';
+  ctx.totalMesesF = 0;
+  ctx.anosCompletos = 0;
+  ctx.mesesDecimo = 0;
+  ctx.mesesFerProp = 0;
+  ctx.tempoDias = 0;
+
+  if (ctx.dtAdmRaw && ctx.dtDemRaw) {
+    const dtAdm = new Date(ctx.dtAdmRaw + 'T00:00:00'); 
+    const dtDem = new Date(ctx.dtDemRaw + 'T00:00:00');
+    
+    if (dtDem >= dtAdm) {
+      const intervalo = calcularIntervalo(dtAdm, dtDem);
+      ctx.anosCompletos = intervalo.anos;
+      ctx.totalMesesF = intervalo.totalMeses;
+      
+      if (dtAdm.getFullYear() === dtDem.getFullYear() && dtAdm.getMonth() === dtDem.getMonth()) {
+        ctx.tempoDias = dtDem.getDate() - dtAdm.getDate() + 1;
+      } else {
+        ctx.tempoDias = dtDem.getDate();
+      }
+      
+      ctx.tempoTexto = `${intervalo.anos} ano(s), ${intervalo.meses} mês(es), ${intervalo.dias} dia(s)`;
+      
+      ctx.mesesDecimo = calcularMeses13(dtAdm, dtDem);
+      ctx.mesesFerProp = calcularMesesFeriasProp(dtAdm, dtDem);
+    } else {
+      ctx.tempoTexto = '⚠️ Demissão anterior à Admissão';
+    }
+  }
+  setEl('tempo-resumo', ctx.tempoTexto);
+
+  ctx.motivoRescisao = document.getElementById('motivo-rescisao')?.value || 'dispensa';
+  ctx.avisoTipo = document.getElementById('aviso-tipo')?.value || 'indenizado';
+  
+  ctx.diasAviso = 30;
+  if (ctx.motivoRescisao === 'dispensa') {
+    ctx.diasAviso = Math.min(30 + ctx.anosCompletos * 3, 90);
+  } else {
+    ctx.diasAviso = 30; 
+  }
+
+  // Ganhos é calculado primeiro para extrair ctx.remuneracaoBase antes das verbas dependentes
+  calcularGanhos(ctx);
+  
+  // Agora calculamos os valores do aviso prévio com base na remuneração integrada
+  ctx.valorDiaAviso = ctx.remuneracaoBase / 30;
+  ctx.valorAvisoCalculado = ctx.remuneracaoBase > 0 ? ctx.valorDiaAviso * ctx.diasAviso : 0;
+
+  calcularBeneficios(ctx);
+  calcularDescontos(ctx);
+  calcularRescisao(ctx);
+  atualizarPainel(ctx);
+}
+
+// ── FUNÇÃO LIMPAR TUDO ──
+function limparTudo() {
+  overrides = {};
+  
+  camposExtras = { ganhos: [], beneficios: [], descontos: [] };
+  const containerGanhos = document.getElementById('campos-ganhos-extras');
+  if (containerGanhos) containerGanhos.innerHTML = '';
+  const containerBenef = document.getElementById('campos-benef-extras');
+  if (containerBenef) containerBenef.innerHTML = '';
+  const containerDesc = document.getElementById('campos-desc-extras');
+  if (containerDesc) containerDesc.innerHTML = '';
+
+  const camposPadrao = [
+    { id: 'data-admissao', def: '' },
+    { id: 'data-demissao', def: '' },
+    { id: 'dias-por-mes', def: '30' },
+    { id: 'salario', def: '' },
+    { id: 'divisor', def: '220' },
+    { id: 'perc-assiduidade', def: '' },
+    { id: 'comissao', def: '' },
+    { id: 'gratificacao', def: '' },
+    { id: 'bonificacao', def: '' },
+    { id: 'plr', def: '' },
+    { id: 'outros-ganhos', def: '' },
+    { id: 'he50-horas', def: '' },
+    { id: 'he100-horas', def: '' },
+    { id: 'perc-he50', def: '50' },
+    { id: 'perc-he100', def: '100' },
+    { id: 'noturno-horas', def: '' },
+    { id: 'perc-noturno', def: '20' },
+    { id: 'dsr-uteis', def: '26' },
+    { id: 'dsr-domingos', def: '4' },
+    { id: 'vt', def: '' },
+    { id: 'passe', def: '' },
+    { id: 'va', def: '' },
+    { id: 'vr', def: '' },
+    { id: 'cesta', def: '' },
+    { id: 'combustivel', def: '' },
+    { id: 'creche', def: '' },
+    { id: 'plano-saude', def: '' },
+    { id: 'plano-odonto', def: '' },
+    { id: 'seguro-vida', def: '' },
+    { id: 'outros-benef', def: '' },
+    { id: 'perc-fgts', def: '8' },
+    { id: 'perc-multa-fgts', def: '40' },
+    { id: 'perc-ferias', def: '100' },
+    { id: 'perc-terco', def: '33.33' },
+    { id: 'adiantamento-decimo', def: '' },
+    { id: 'ferias-vencidas-anos', def: '' },
+    { id: 'fgts-saldo-real', def: '' },
+    { id: 'outros-rescisao', def: '' },
+    { id: 'dependentes', def: '' },
+    { id: 'faltas-dias', def: '' },
+    { id: 'atrasos', def: '' },
+    { id: 'adiantamento', def: '' },
+    { id: 'emprestimo', def: '' },
+    { id: 'pensao', def: '' },
+    { id: 'outros-desc', def: '' }
+  ];
+
+  camposPadrao.forEach(campo => {
+    const el = document.getElementById(campo.id);
+    if (el) {
+      el.value = campo.def;
+      el.classList.remove('overridden');
+    }
+  });
+
+  const camposCalculados = [
+    'assiduidade-val', 'he50-val', 'he100-val', 'noturno-val', 'dsr-val', 
+    'insalubridade-val', 'periculosidade-val', 'fgts-val', 'ferias-val', 
+    'terco-val', 'total-ferias-val', 'decimo-val', 'saldo-sal', 'decimo-prop', 
+    'ferias-prop', 'ferias-vencidas-calc', 'aviso-val', 'fgts-acum', 'multa-fgts', 
+    'total-rescisao', 'inss-val', 'irrf-val', 'vt-desc', 'faltas-val', 
+    'pensao-val', 'res-bruto', 'res-benef', 'res-desc', 'res-liquido', 'res-pacote'
+  ];
+
+  camposCalculados.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.value = '';
+      el.classList.remove('overridden');
+    }
+  });
+
+  const chkDobro = document.getElementById('ferias-dobro');
+  if (chkDobro) chkDobro.checked = true;
+
+  const selects = document.querySelectorAll('.app select');
+  selects.forEach(sel => {
+    sel.selectedIndex = 0;
+  });
+
+  setRegime('clt');
+  setPericuloso(false);
+  document.getElementById('fgts-origem').value = 'estimado';
+  toggleFGTSInput();
+
+  calcular();
+}
+
 calcular();
 </script>
 </body>
